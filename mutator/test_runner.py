@@ -10,4 +10,4 @@ def run_code(code: str):
         return "NO_ERROR"
 
     except Exception as e:
-        return f"{type(e).__name__}: {e}"
+        return str(e) if str(e) else type(e).__name__

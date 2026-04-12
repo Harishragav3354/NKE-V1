@@ -1,4 +1,3 @@
-import json
 import requests
 import streamlit as st
 
@@ -21,43 +20,52 @@ def check_backend():
         return False, {"error": str(e)}
 
 
-def build_preview_artifact(code: str, error: str, context: dict) -> str:
-    return f"""CODE:
-{code}
+def analyze_code(code: str, context: dict):
+    try:
+        response = requests.post(
+            f"{BACKEND_URL}/analyze",
+            json={"code": code, "context": context},
+            timeout=10
+        )
+        if response.status_code == 200:
+            return True, response.json()
+        return False, {
+            "error": f"Unexpected status code: {response.status_code}",
+            "body": response.text
+        }
+    except Exception as e:
+        return False, {"error": str(e)}
 
-ERROR:
-{error}
 
-CONTEXT:
-{context}
-"""
-
+# ─── Header ───────────────────────────────────────────────────────────────────
 
 st.title("🧠 Negative Knowledge Engine (NKE) – v1")
-st.caption("Failure-only boundary learning demo shell")
+st.caption("Failure-only boundary learning demo")
+
+# ─── Sidebar ──────────────────────────────────────────────────────────────────
 
 with st.sidebar:
     st.subheader("Backend Status")
     if st.button("Check Backend"):
         ok, result = check_backend()
         if ok:
-            st.success("Backend is running")
+            st.success("✅ Backend is running")
             st.json(result)
         else:
-            st.error("Backend is not reachable")
+            st.error("❌ Backend not reachable")
             st.json(result)
 
     st.markdown("---")
     st.subheader("NKE Rules")
-    st.markdown(
-        """
-- Only failures
+    st.markdown("""
+- Only failures stored
 - Artifact = CODE + ERROR + CONTEXT
-- Output only: `REJECTED` or `UNKNOWN`
+- Output: `REJECTED` or `UNKNOWN` only
 - No success prediction
 - No fix suggestions
-        """
-    )
+    """)
+
+# ─── Input Section ────────────────────────────────────────────────────────────
 
 st.markdown("## Submit Code")
 
@@ -77,41 +85,46 @@ assignment_name = st.text_input(
     value="add_function"
 )
 
-error_input = st.text_input(
-    "Captured Error (temporary manual input)",
-    value="AssertionError: expected 5 got 1"
-)
+analyze = st.button("⚡ Analyze with NKE")
 
-analyze = st.button("Analyze with NKE")
+# ─── Analysis ─────────────────────────────────────────────────────────────────
 
 if analyze:
-    context = {"assignment": assignment_name}
+    if not code_input.strip():
+        st.warning("⚠️ Please paste some Python code before analyzing.")
+    else:
+        context = {"assignment": assignment_name}
 
-    with st.spinner("Preparing artifact...", show_time=True):
-        artifact = build_preview_artifact(
-            code=code_input,
-            error=error_input,
-            context=context
-        )
+        with st.spinner("Sending to NKE backend...", show_time=True):
+            ok, result = analyze_code(code_input, context)
 
-    st.success("Artifact prepared")
+        if ok:
+            st.success("✅ Analysis complete")
 
-    col1, col2 = st.columns(2)
+            col1, col2 = st.columns(2)
 
-    with col1:
-        st.markdown("### Artifact Preview")
-        st.code(artifact, language="text")
+            with col1:
+                st.markdown("### Decision")
+                if result["decision"] == "REJECTED":
+                    st.error(f"🚫 {result['decision']}")
+                else:
+                    st.info(f"❓ {result['decision']}")
 
-    with col2:
-        st.markdown("### Current Decision")
-        st.warning("Backend analyze endpoint not connected yet")
-        st.write("Temporary status: `PENDING`")
+                st.markdown("### Captured Error")
+                st.code(result["error"], language="text")
 
-        st.markdown("### Context")
-        st.json(context)
+            with col2:
+                st.markdown("### Context")
+                st.json(result["context"])
+
+            st.markdown("### Artifact")
+            st.code(result["artifact"], language="text")
+
+        else:
+            st.error("❌ Backend call failed")
+            st.json(result)
+
+# ─── Footer ───────────────────────────────────────────────────────────────────
 
 st.markdown("---")
-st.markdown("## Next Integration Step")
-st.info(
-    "Next, connect this button to the backend `/analyze` endpoint once the artifact runner and API are ready."
-)
+st.caption("NKE v1 — Failure memory engine. No predictions. No fixes. Only exclusions.")
