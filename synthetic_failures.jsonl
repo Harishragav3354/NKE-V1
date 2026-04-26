@@ -1,0 +1,16 @@
+{"id": 1, "error_type": "IndexError", "bug_type": "out_of_bounds_access", "code": "items = [10, 20, 30]\nprint(items[3])", "expected_issue": "List index is out of range."}
+{"id": 2, "error_type": "TypeError", "bug_type": "string_int_concat", "code": "age = 21\nmessage = 'Age: ' + age\nprint(message)", "expected_issue": "Cannot concatenate string and integer."}
+{"id": 3, "error_type": "AssertionError", "bug_type": "failed_assertion", "code": "result = 2 + 2\nassert result == 5", "expected_issue": "Assertion condition is false."}
+{"id": 4, "error_type": "ZeroDivisionError", "bug_type": "divide_by_zero", "code": "numerator = 10\ndenominator = 0\nprint(numerator / denominator)", "expected_issue": "Division by zero."}
+{"id": 5, "error_type": "KeyError", "bug_type": "missing_dictionary_key", "code": "student = {'name': 'Asha', 'age': 20}\nprint(student['grade'])", "expected_issue": "Key does not exist in dictionary."}
+{"id": 6, "error_type": "ValueError", "bug_type": "invalid_int_conversion", "code": "text = '12A'\nvalue = int(text)\nprint(value)", "expected_issue": "Invalid literal for integer conversion."}
+{"id": 7, "error_type": "AttributeError", "bug_type": "missing_method_call", "code": "name = 'python'\nprint(name.uppercase())", "expected_issue": "String object has no such attribute."}
+{"id": 8, "error_type": "IndexError", "bug_type": "loop_off_by_one", "code": "nums = [1, 2, 3]\nfor i in range(len(nums) + 1):\n    print(nums[i])", "expected_issue": "Loop goes one step too far."}
+{"id": 9, "error_type": "TypeError", "bug_type": "wrong_argument_type", "code": "def square(n):\n    return n * n\n\nprint(square('4'))", "expected_issue": "Function receives a string instead of a number."}
+{"id": 10, "error_type": "ValueError", "bug_type": "empty_string_to_int", "code": "text = ''\nnum = int(text)\nprint(num)", "expected_issue": "Empty string cannot be converted to int."}
+{"id": 11, "error_type": "AttributeError", "bug_type": "none_object_method_call", "code": "user = None\nprint(user.strip())", "expected_issue": "NoneType object has no attribute."}
+{"id": 12, "error_type": "KeyError", "bug_type": "wrong_key_name", "code": "data = {'id': 101, 'score': 88}\nprint(data['marks'])", "expected_issue": "Requested key is not present."}
+{"id": 13, "error_type": "ZeroDivisionError", "bug_type": "mod_by_zero", "code": "x = 15\ny = 0\nprint(x % y)", "expected_issue": "Modulo by zero."}
+{"id": 14, "error_type": "AssertionError", "bug_type": "boundary_assertion", "code": "n = 0\nassert n > 0", "expected_issue": "Boundary condition fails."}
+{"id": 15, "error_type": "wrong return type", "bug_type": "returns_string_instead_of_int", "code": "def add(a, b):\n    return str(a + b)\n\nresult = add(2, 3)\nprint(type(result))", "expected_issue": "Function returns the wrong type."}
+{"id": 16, "error_type": "empty-list bug", "bug_type": "pop_from_empty_list", "code": "stack = []\nitem = stack.pop()\nprint(item)", "expected_issue": "Operation assumes list has at least one element."}

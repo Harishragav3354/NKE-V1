@@ -9,7 +9,7 @@ model = SentenceTransformer("all-MiniLM-L6-v2")
 print("Connecting to PostgreSQL...")
 conn = psycopg2.connect(
     host="localhost",
-    port=5433,
+    port=5432,
     dbname="nke_db",
     user="postgres",
     password="nke1904"
